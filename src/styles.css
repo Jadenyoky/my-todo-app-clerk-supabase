@@ -1,0 +1,142 @@
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: #f0f2f5;
+  color: #333;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100svh;
+}
+
+.container {
+  padding: 0 20px 20px 20px;
+  background: #ffffff;
+  box-shadow: 0 0px 8px rgba(94, 2, 122, 0.377);
+  border-radius: 16px;
+}
+
+.header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid #ddd;
+}
+
+.header h1 {
+  font-size: 24px;
+  margin-left: 20px;
+  flex-grow: 1;
+}
+
+.header button {
+  background-color: #c9bcbc;
+  color: #fff;
+  border: none;
+  padding: 7px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.header button:hover {
+  background-color: #0da0aa63;
+}
+
+.todo-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.todo-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 5px;
+  background-color: #fafafa;
+  border-radius: 4px;
+}
+
+.todo-list li:last-child {
+  border-bottom: none;
+}
+
+.todo-list .todo-task {
+  font-size: 18px;
+}
+
+.todo-list .todo-status {
+  background-color: #28a745;
+  color: #fff;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.todo-list .todo-status.completed {
+  background-color: #6c757d;
+}
+
+.add-todo-form {
+  display: flex;
+  justify-content: space-between;
+  margin: 10px;
+  gap: 20px;
+}
+
+.add-todo-form input {
+  width: 300px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 21px;
+  font-size: 16px;
+}
+
+.add-todo-form button {
+  background-color: #007bff;
+  color: #fff;
+  padding: 0;
+  border-radius: 21px;
+  cursor: pointer;
+  font-size: 16px;
+  width: 98px;
+}
+
+.add-todo-form button:hover {
+  background-color: #0056b3;
+}
+
+button {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+button:disabled {
+  background-color: #ddd;
+  cursor: not-allowed;
+}
+
+.icon {
+  font-size: 20px;
+  color: #333;
+  margin-right: 8px;
+}
+
+.icon:hover {
+  color: #007bff;
+}
