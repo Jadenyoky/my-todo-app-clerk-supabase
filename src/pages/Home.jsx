@@ -1,3 +1,9 @@
+import {
+  SignedIn,
+  SignedOut,
+  SignInButton,
+  UserButton,
+} from "@clerk/clerk-react";
 import { useNavigate } from "react-router-dom";
 
 function Home() {
@@ -13,6 +19,12 @@ function Home() {
       <button className="header-button" onClick={handleGetStarted}>
         Get Started
       </button>
+      <SignedIn>
+        <div className="header">
+          <UserButton />
+          <h1>in home only when signin</h1>
+        </div>
+      </SignedIn>
     </div>
   );
 }

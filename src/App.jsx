@@ -16,12 +16,23 @@ function App() {
   return (
     <div>
       <Test />
-      <SignedIn key={pathname}>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/todos" element={<Todos />} />
-        </Routes>
-      </SignedIn>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route
+          path="/todos"
+          element={
+            <>
+              <SignedOut>
+                <h1>in home only when signout</h1>
+                <SignInButton mode="modal" />
+              </SignedOut>
+              <SignedIn>
+                <Todos />
+              </SignedIn>
+            </>
+          }
+        />
+      </Routes>
     </div>
   );
 }
