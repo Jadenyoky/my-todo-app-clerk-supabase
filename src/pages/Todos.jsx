@@ -21,11 +21,17 @@ function Todos() {
   }, [user.id]);
 
   const handleAddTodo = async (newTodo) => {
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from("todos")
       .insert([{ user_id: user.id, task: newTodo, completed: false }])
       .select();
-    setTodos([...todos, ...data]);
+
+    if (error) {
+      console.log(error);
+    } else {
+      setTodos([...todos, ...data]);
+      console.log(data);
+    }
   };
 
   return (
