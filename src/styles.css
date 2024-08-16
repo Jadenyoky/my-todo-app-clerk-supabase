@@ -7,15 +7,9 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100svh;
+  min-height: 100svh;
 }
 
-.container {
-  padding: 0 20px 20px 20px;
-  background: #ffffff;
-  box-shadow: 0 0px 8px rgba(94, 2, 122, 0.377);
-  border-radius: 16px;
-}
 
 .header {
   display: flex;
@@ -139,4 +133,126 @@ button:disabled {
 
 .icon:hover {
   color: #007bff;
+}
+
+/* styles.css */
+
+/* تعيين الخطوط الأساسية */
+body {
+  font-family: 'Arial', sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f0f8ff;
+  /* لون خلفية فاتح */
+  color: #333;
+}
+
+h1,
+h2 {
+  color: #2c3e50;
+  /* لون نص عناوين داكن */
+}
+
+/* تصميم الصفحة الرئيسية */
+.container {
+  width: 90%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.header {
+  background-color: #3498db;
+  /* لون خلفية رأس الصفحة */
+  color: white;
+  padding: 10px 0;
+  text-align: center;
+}
+
+.header h1 {
+  margin: 0;
+}
+
+/* تصميم البطاقات */
+.post-card {
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.post-card h2 {
+  margin: 0 0 10px;
+}
+
+.post-card p {
+  margin: 0;
+}
+
+/* تصميم الأيقونات */
+.icon {
+  cursor: pointer;
+  font-size: 20px;
+  transition: color 0.3s;
+}
+
+.icon:hover {
+  color: #e74c3c;
+  /* لون عند التمرير فوق الأيقونة */
+}
+
+/* تصميم الأزرار */
+button,
+.btn {
+  background-color: #3498db;
+  /* لون خلفية الأزرار */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s;
+}
+
+button:hover,
+.btn:hover {
+  background-color: #2980b9;
+  /* لون خلفية الأزرار عند التمرير فوقها */
+}
+
+/* تصميم الأزرار تسجيل الدخول والخروج */
+.sign-in-btn,
+.sign-out-btn {
+  background-color: #2ecc71;
+  /* لون خلفية الأزرار الخاصة بتسجيل الدخول والخروج */
+}
+
+.sign-in-btn:hover,
+.sign-out-btn:hover {
+  background-color: #27ae60;
+  /* لون خلفية الأزرار عند التمرير فوقها */
+}
+
+/* تصميم الرسائل */
+.alert {
+  background-color: #e74c3c;
+  /* لون خلفية الرسائل التحذيرية */
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+  margin-top: 10px;
+}
+
+/* تصميم التصميم المتجاوب */
+@media (max-width: 768px) {
+  .post-card {
+    padding: 15px;
+  }
+
+  .container {
+    width: 95%;
+  }
 }

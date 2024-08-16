@@ -1,4 +1,4 @@
-import { Routes, Route, useLocation } from "react-router-dom";
+import { Routes, Route, useLocation, Link } from "react-router-dom";
 import {
   RedirectToSignIn,
   SignedIn,
@@ -10,12 +10,13 @@ import Home from "./pages/Home";
 import Todos from "./pages/Todos";
 import "./styles.css"; // تأكد من استيراد ملف CSS هنا
 import Test from "./components/test";
-
+import Posts from "./pages/Posts";
 function App() {
   const pathname = useLocation();
   return (
     <div>
       <Test />
+      <Link to="/posts">To Posts</Link>
       <Routes>
         <Route path="/" element={<Home />} />
         <Route
@@ -32,6 +33,7 @@ function App() {
             </>
           }
         />
+        <Route path="/posts" element={<Posts />} />
       </Routes>
     </div>
   );
