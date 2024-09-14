@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 const App = () => {
   const correctWords = [
@@ -36,8 +36,24 @@ const App = () => {
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const [transcript, setTranscript] = useState("");
   const [isCorrect, setIsCorrect] = useState(true);
+  const [isListening, setIsListening] = useState(false); // حالة التسجيل
+  const [hasMicrophone, setHasMicrophone] = useState(true); // حالة الميكروفون
+
+  useEffect(() => {
+    // التحقق مما إذا كان الجهاز لديه ميكروفون
+    navigator.mediaDevices
+      .getUserMedia({ audio: true })
+      .then(() => {
+        setHasMicrophone(true);
+      })
+      .catch((err) => {
+        console.error("No microphone found:", err);
+        setHasMicrophone(false);
+      });
+  }, []);
 
   const startListening = () => {
+    setIsListening(true); // تغيير حالة التسجيل
     setIsCorrect(true);
     const recognition = new window.webkitSpeechRecognition();
     recognition.lang = "ar-SA";
@@ -58,6 +74,7 @@ const App = () => {
         } else {
           correct = false;
           setIsCorrect(false);
+          setIsListening(false); // إيقاف التسجيل عند الخطأ
           break;
         }
       }
@@ -70,38 +87,71 @@ const App = () => {
     };
 
     recognition.onend = () => {
-      if (isCorrect) {
+      if (isCorrect && currentWordIndex < correctWords.length) {
         startListening(); // استمر في الاستماع إذا لم يكن هناك خطأ
+      } else {
+        setIsListening(false); // إيقاف الاستماع بعد الانتهاء أو حدوث خطأ
       }
     };
 
     recognition.start();
   };
 
+  const handleContinue = () => {
+    if (!isListening && !isCorrect) {
+      startListening(); // إعادة التسجيل بعد الخطأ
+    }
+  };
+
   return (
     <div style={{ textAlign: "center", marginTop: "50px" }}>
       <h1>تسميع سورة الفاتحة</h1>
 
-      <button
-        onClick={startListening}
-        style={{ margin: "10px", padding: "10px" }}
-      >
-        ابدأ التلاوة
-      </button>
+      {!hasMicrophone ? (
+        <p style={{ color: "red" }}>❌ جهازك لا يحتوي على ميكروفون!</p>
+      ) : (
+        <>
+          <button
+            onClick={isListening ? null : startListening} // لا يتم النقر أثناء التسجيل
+            style={{
+              margin: "10px",
+              padding: "10px",
+              backgroundColor: isListening ? "red" : "green",
+              color: "white",
+            }}
+          >
+            {isListening ? "التسجيل جارٍ..." : "ابدأ التلاوة"}
+          </button>
 
-      <p>النص المدخل: {transcript}</p>
-      <p>
-        {isCorrect ? (
-          <span style={{ color: "green" }}>✅ القراءة صحيحة حتى الآن!</span>
-        ) : (
-          <span style={{ color: "red" }}>❌ هناك خطأ، أعد المحاولة!</span>
-        )}
-      </p>
+          <p>النص المدخل: {transcript}</p>
 
-      <p>
-        النص الصحيح حتى الآن:{" "}
-        {correctWords.slice(0, currentWordIndex).join(" ")}
-      </p>
+          <p>
+            {isCorrect ? (
+              <span style={{ color: "green" }}>✅ القراءة صحيحة حتى الآن!</span>
+            ) : (
+              <span style={{ color: "red" }}>❌ هناك خطأ، أعد المحاولة!</span>
+            )}
+          </p>
+
+          <p>
+            النص الصحيح حتى الآن:{" "}
+            {correctWords.slice(0, currentWordIndex).map((word, index) => (
+              <span key={index} style={{ paddingRight: "5px" }}>
+                {word}
+              </span>
+            ))}
+          </p>
+
+          {!isCorrect && (
+            <button
+              onClick={handleContinue}
+              style={{ marginTop: "10px", padding: "10px" }}
+            >
+              أعد المحاولة من الكلمة "{correctWords[currentWordIndex]}"
+            </button>
+          )}
+        </>
+      )}
     </div>
   );
 };
