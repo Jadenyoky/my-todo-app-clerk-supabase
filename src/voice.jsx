@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 
 const App = () => {
+  // نص سورة الفاتحة مقسم إلى كلمات
   const correctWords = [
     "بسم",
     "الله",
