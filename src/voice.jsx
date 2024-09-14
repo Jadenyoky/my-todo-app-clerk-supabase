@@ -36,11 +36,15 @@ const App = () => {
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const [transcript, setTranscript] = useState("");
   const [isCorrect, setIsCorrect] = useState(true);
+  const [confirmedWords, setConfirmedWords] = useState([]); // الكلمات المؤكدة
   const [isListening, setIsListening] = useState(false); // لحالة التسجيل
+  const [errorMessage, setErrorMessage] = useState(""); // رسالة الخطأ
 
   const startListening = () => {
     setIsListening(true); // تغيير حالة التسجيل
     setIsCorrect(true);
+    setErrorMessage(""); // إعادة تعيين رسالة الخطأ
+
     const recognition = new window.webkitSpeechRecognition();
     recognition.lang = "ar-SA";
     recognition.continuous = false;
@@ -50,17 +54,22 @@ const App = () => {
       const resultText = event.results[0][0].transcript.trim();
       const words = resultText.split(" ");
 
-      let i = currentWordIndex;
+      let i = currentWordIndex; // استكمال التلاوة من آخر كلمة صحيحة
       let correct = true;
 
       for (let word of words) {
         if (word === correctWords[i]) {
-          setCurrentWordIndex(i + 1);
+          setConfirmedWords((prevConfirmedWords) => [
+            ...prevConfirmedWords,
+            word,
+          ]);
+          setCurrentWordIndex(i + 1); // الانتقال إلى الكلمة التالية
           i++;
         } else {
           correct = false;
           setIsCorrect(false);
           setIsListening(false); // إيقاف التسجيل عند الخطأ
+          setErrorMessage(`خطأ في الكلمة: "${word}". حاول مرة أخرى.`); // رسالة الخطأ
           break;
         }
       }
@@ -84,12 +93,18 @@ const App = () => {
     recognition.start();
   };
 
+  const handleRetry = () => {
+    setIsCorrect(true);
+    setErrorMessage(""); // إعادة تعيين رسالة الخطأ
+    startListening(); // استئناف التسجيل من حيث توقفت
+  };
+
   return (
     <div style={{ textAlign: "center", marginTop: "50px" }}>
       <h1>تسميع سورة الفاتحة</h1>
 
       <button
-        onClick={isListening ? null : startListening} // لا يمكن النقر أثناء التسجيل
+        onClick={isListening ? null : startListening} // لا يتم النقر أثناء التسجيل
         style={{
           margin: "10px",
           padding: "10px",
@@ -106,14 +121,23 @@ const App = () => {
         {isCorrect ? (
           <span style={{ color: "green" }}>✅ القراءة صحيحة حتى الآن!</span>
         ) : (
-          <span style={{ color: "red" }}>❌ هناك خطأ، أعد المحاولة!</span>
+          <span style={{ color: "red" }}>{errorMessage}</span>
         )}
       </p>
 
       <p>
-        النص الصحيح حتى الآن:{" "}
-        {correctWords.slice(0, currentWordIndex).join(" ")}
+        النص الصحيح حتى الآن: {confirmedWords.join(" ")}{" "}
+        {/* الكلمات التي تم تأكيد صحتها */}
       </p>
+
+      {!isCorrect && (
+        <button
+          onClick={handleRetry}
+          style={{ marginTop: "10px", padding: "10px" }}
+        >
+          أعد المحاولة من الكلمة "{correctWords[currentWordIndex]}"
+        </button>
+      )}
     </div>
   );
 };
