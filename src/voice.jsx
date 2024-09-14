@@ -1,27 +1,68 @@
 import React, { useState } from "react";
 
 const App = () => {
-  const [transcript, setTranscript] = useState("");
-  const [isListening, setIsListening] = useState(false);
-  const [isCorrect, setIsCorrect] = useState(null);
+  const correctWords = [
+    "بسم",
+    "الله",
+    "الرحمن",
+    "الرحيم",
+    "الحمد",
+    "لله",
+    "رب",
+    "العالمين",
+    "الرحمن",
+    "الرحيم",
+    "مالك",
+    "يوم",
+    "الدين",
+    "إياك",
+    "نعبد",
+    "وإياك",
+    "نستعين",
+    "اهدنا",
+    "الصراط",
+    "المستقيم",
+    "صراط",
+    "الذين",
+    "أنعمت",
+    "عليهم",
+    "غير",
+    "المغضوب",
+    "عليهم",
+    "ولا",
+    "الضالين",
+  ];
 
-  const correctAyah = "بسم الله الرحمن الرحيم";
+  const [currentWordIndex, setCurrentWordIndex] = useState(0);
+  const [transcript, setTranscript] = useState("");
+  const [isCorrect, setIsCorrect] = useState(true);
 
   const startListening = () => {
-    setIsListening(true);
+    setIsCorrect(true);
     const recognition = new window.webkitSpeechRecognition();
-    recognition.lang = "ar-SA"; // التأكد من أن اللغة العربية قيد التفعيل
+    recognition.lang = "ar-SA";
     recognition.continuous = false;
     recognition.interimResults = false;
 
     recognition.onresult = (event) => {
-      const resultText = event.results[0][0].transcript;
-      setTranscript(resultText);
-      if (resultText.trim() === correctAyah) {
-        setIsCorrect(true);
-      } else {
-        setIsCorrect(false);
+      const resultText = event.results[0][0].transcript.trim();
+      const words = resultText.split(" ");
+
+      let i = currentWordIndex;
+      let correct = true;
+
+      for (let word of words) {
+        if (word === correctWords[i]) {
+          setCurrentWordIndex(i + 1);
+          i++;
+        } else {
+          correct = false;
+          setIsCorrect(false);
+          break;
+        }
       }
+
+      setTranscript(resultText);
     };
 
     recognition.onerror = (event) => {
@@ -29,7 +70,9 @@ const App = () => {
     };
 
     recognition.onend = () => {
-      setIsListening(false);
+      if (isCorrect) {
+        startListening(); // استمر في الاستماع إذا لم يكن هناك خطأ
+      }
     };
 
     recognition.start();
@@ -37,27 +80,28 @@ const App = () => {
 
   return (
     <div style={{ textAlign: "center", marginTop: "50px" }}>
-      <h1>تطبيق تلاوة القرآن</h1>
-      <p>اقرأ الآية التالية:</p>
-      <p style={{ fontSize: "24px", fontWeight: "bold" }}>
-        بسم الله الرحمن الرحيم
-      </p>
+      <h1>تسميع سورة الفاتحة</h1>
 
       <button
         onClick={startListening}
         style={{ margin: "10px", padding: "10px" }}
       >
-        {isListening ? "جارٍ التلاوة..." : "ابدأ التلاوة"}
+        ابدأ التلاوة
       </button>
 
       <p>النص المدخل: {transcript}</p>
+      <p>
+        {isCorrect ? (
+          <span style={{ color: "green" }}>✅ القراءة صحيحة حتى الآن!</span>
+        ) : (
+          <span style={{ color: "red" }}>❌ هناك خطأ، أعد المحاولة!</span>
+        )}
+      </p>
 
-      {isCorrect === true && (
-        <p style={{ color: "green" }}>✅ القراءة صحيحة!</p>
-      )}
-      {isCorrect === false && (
-        <p style={{ color: "red" }}>❌ هناك خطأ في القراءة.</p>
-      )}
+      <p>
+        النص الصحيح حتى الآن:{" "}
+        {correctWords.slice(0, currentWordIndex).join(" ")}
+      </p>
     </div>
   );
 };
