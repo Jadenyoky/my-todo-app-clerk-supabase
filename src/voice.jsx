@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 
 const App = () => {
   const correctWords = [
@@ -36,36 +36,10 @@ const App = () => {
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const [transcript, setTranscript] = useState("");
   const [isCorrect, setIsCorrect] = useState(true);
-  const [isListening, setIsListening] = useState(false);
-  const [hasMicrophone, setHasMicrophone] = useState(true);
-
-  useEffect(() => {
-    // التحقق مما إذا كان الجهاز لديه ميكروفون
-    navigator.mediaDevices
-      .getUserMedia({ audio: true })
-      .then(() => {
-        setHasMicrophone(true);
-      })
-      .catch((err) => {
-        console.error("No microphone found:", err);
-        setHasMicrophone(false);
-      });
-  }, []);
 
   const startListening = () => {
-    const SpeechRecognition =
-      window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SpeechRecognition) {
-      alert(
-        "التعرف على الصوت غير مدعوم في هذا المتصفح. جرب متصفحًا آخر مثل Chrome."
-      );
-      return;
-    }
-
-    setIsListening(true);
     setIsCorrect(true);
-
-    const recognition = new SpeechRecognition();
+    const recognition = new window.webkitSpeechRecognition();
     recognition.lang = "ar-SA";
     recognition.continuous = false;
     recognition.interimResults = false;
@@ -77,8 +51,6 @@ const App = () => {
       let i = currentWordIndex;
       let correct = true;
 
-      console.log("Result text:", resultText);
-
       for (let word of words) {
         if (word === correctWords[i]) {
           setCurrentWordIndex(i + 1);
@@ -86,7 +58,6 @@ const App = () => {
         } else {
           correct = false;
           setIsCorrect(false);
-          setIsListening(false);
           break;
         }
       }
@@ -99,71 +70,38 @@ const App = () => {
     };
 
     recognition.onend = () => {
-      if (isCorrect && currentWordIndex < correctWords.length) {
+      if (isCorrect) {
         startListening(); // استمر في الاستماع إذا لم يكن هناك خطأ
-      } else {
-        setIsListening(false);
       }
     };
 
     recognition.start();
   };
 
-  const handleContinue = () => {
-    if (!isListening && !isCorrect) {
-      startListening(); // إعادة التسجيل بعد الخطأ
-    }
-  };
-
   return (
     <div style={{ textAlign: "center", marginTop: "50px" }}>
       <h1>تسميع سورة الفاتحة</h1>
 
-      {!hasMicrophone ? (
-        <p style={{ color: "red" }}>❌ جهازك لا يحتوي على ميكروفون!</p>
-      ) : (
-        <>
-          <button
-            onClick={isListening ? null : startListening} // لا يتم النقر أثناء التسجيل
-            style={{
-              margin: "10px",
-              padding: "10px",
-              backgroundColor: isListening ? "red" : "green",
-              color: "white",
-            }}
-          >
-            {isListening ? "التسجيل جارٍ..." : "ابدأ التلاوة"}
-          </button>
+      <button
+        onClick={startListening}
+        style={{ margin: "10px", padding: "10px" }}
+      >
+        ابدأ التلاوة
+      </button>
 
-          <p>النص المدخل: {transcript}</p>
+      <p>النص المدخل: {transcript}</p>
+      <p>
+        {isCorrect ? (
+          <span style={{ color: "green" }}>✅ القراءة صحيحة حتى الآن!</span>
+        ) : (
+          <span style={{ color: "red" }}>❌ هناك خطأ، أعد المحاولة!</span>
+        )}
+      </p>
 
-          <p>
-            {isCorrect ? (
-              <span style={{ color: "green" }}>✅ القراءة صحيحة حتى الآن!</span>
-            ) : (
-              <span style={{ color: "red" }}>❌ هناك خطأ، أعد المحاولة!</span>
-            )}
-          </p>
-
-          <p>
-            النص الصحيح حتى الآن:{" "}
-            {correctWords.slice(0, currentWordIndex).map((word, index) => (
-              <span key={index} style={{ paddingRight: "5px" }}>
-                {word}
-              </span>
-            ))}
-          </p>
-
-          {!isCorrect && (
-            <button
-              onClick={handleContinue}
-              style={{ marginTop: "10px", padding: "10px" }}
-            >
-              أعد المحاولة من الكلمة "{correctWords[currentWordIndex]}"
-            </button>
-          )}
-        </>
-      )}
+      <p>
+        النص الصحيح حتى الآن:{" "}
+        {correctWords.slice(0, currentWordIndex).join(" ")}
+      </p>
     </div>
   );
 };
