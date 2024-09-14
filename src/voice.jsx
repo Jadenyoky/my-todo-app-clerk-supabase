@@ -36,8 +36,10 @@ const App = () => {
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const [transcript, setTranscript] = useState("");
   const [isCorrect, setIsCorrect] = useState(true);
+  const [isListening, setIsListening] = useState(false); // لحالة التسجيل
 
   const startListening = () => {
+    setIsListening(true); // تغيير حالة التسجيل
     setIsCorrect(true);
     const recognition = new window.webkitSpeechRecognition();
     recognition.lang = "ar-SA";
@@ -58,6 +60,7 @@ const App = () => {
         } else {
           correct = false;
           setIsCorrect(false);
+          setIsListening(false); // إيقاف التسجيل عند الخطأ
           break;
         }
       }
@@ -67,11 +70,14 @@ const App = () => {
 
     recognition.onerror = (event) => {
       console.error("حدث خطأ في التعرف على الصوت:", event.error);
+      setIsListening(false); // إيقاف التسجيل عند الخطأ
     };
 
     recognition.onend = () => {
-      if (isCorrect) {
+      if (isCorrect && currentWordIndex < correctWords.length) {
         startListening(); // استمر في الاستماع إذا لم يكن هناك خطأ
+      } else {
+        setIsListening(false); // إيقاف الاستماع بعد الانتهاء أو حدوث خطأ
       }
     };
 
@@ -83,13 +89,19 @@ const App = () => {
       <h1>تسميع سورة الفاتحة</h1>
 
       <button
-        onClick={startListening}
-        style={{ margin: "10px", padding: "10px" }}
+        onClick={isListening ? null : startListening} // لا يمكن النقر أثناء التسجيل
+        style={{
+          margin: "10px",
+          padding: "10px",
+          backgroundColor: isListening ? "red" : "green",
+          color: "white",
+        }}
       >
-        ابدأ التلاوة
+        {isListening ? "التسجيل جارٍ..." : "ابدأ التلاوة"}
       </button>
 
       <p>النص المدخل: {transcript}</p>
+
       <p>
         {isCorrect ? (
           <span style={{ color: "green" }}>✅ القراءة صحيحة حتى الآن!</span>
