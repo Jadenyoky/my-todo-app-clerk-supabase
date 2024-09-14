@@ -11,6 +11,7 @@ export default defineConfig({
         enabled: true, // Enables the service worker in development mode
       },
       registerType: "autoUpdate", // Automatically updates the service worker
+
       manifest: {
         theme_color: "#8936FF",
         background_color: "#2EC6FE",
