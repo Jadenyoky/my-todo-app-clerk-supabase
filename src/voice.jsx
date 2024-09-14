@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 
 const App = () => {
-  // نص سورة الفاتحة مقسم إلى كلمات
   const correctWords = [
     "بسم",
     "الله",
@@ -37,8 +36,8 @@ const App = () => {
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const [transcript, setTranscript] = useState("");
   const [isCorrect, setIsCorrect] = useState(true);
-  const [isListening, setIsListening] = useState(false); // حالة التسجيل
-  const [hasMicrophone, setHasMicrophone] = useState(true); // حالة الميكروفون
+  const [isListening, setIsListening] = useState(false);
+  const [hasMicrophone, setHasMicrophone] = useState(true);
 
   useEffect(() => {
     // التحقق مما إذا كان الجهاز لديه ميكروفون
@@ -54,9 +53,19 @@ const App = () => {
   }, []);
 
   const startListening = () => {
-    setIsListening(true); // تغيير حالة التسجيل
+    const SpeechRecognition =
+      window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      alert(
+        "التعرف على الصوت غير مدعوم في هذا المتصفح. جرب متصفحًا آخر مثل Chrome."
+      );
+      return;
+    }
+
+    setIsListening(true);
     setIsCorrect(true);
-    const recognition = new window.webkitSpeechRecognition();
+
+    const recognition = new SpeechRecognition();
     recognition.lang = "ar-SA";
     recognition.continuous = false;
     recognition.interimResults = false;
@@ -68,6 +77,8 @@ const App = () => {
       let i = currentWordIndex;
       let correct = true;
 
+      console.log("Result text:", resultText);
+
       for (let word of words) {
         if (word === correctWords[i]) {
           setCurrentWordIndex(i + 1);
@@ -75,7 +86,7 @@ const App = () => {
         } else {
           correct = false;
           setIsCorrect(false);
-          setIsListening(false); // إيقاف التسجيل عند الخطأ
+          setIsListening(false);
           break;
         }
       }
@@ -91,7 +102,7 @@ const App = () => {
       if (isCorrect && currentWordIndex < correctWords.length) {
         startListening(); // استمر في الاستماع إذا لم يكن هناك خطأ
       } else {
-        setIsListening(false); // إيقاف الاستماع بعد الانتهاء أو حدوث خطأ
+        setIsListening(false);
       }
     };
 
